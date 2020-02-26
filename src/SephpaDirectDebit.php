@@ -23,6 +23,7 @@ class SephpaDirectDebit extends Sephpa
     const SEPA_PAIN_008_001_02_AUSTRIAN_003 = SepaUtilities::SEPA_PAIN_008_001_02_AUSTRIAN_003;
     const SEPA_PAIN_008_002_02 = SepaUtilities::SEPA_PAIN_008_002_02;
     const SEPA_PAIN_008_003_02 = SepaUtilities::SEPA_PAIN_008_003_02;
+    const SEPA_PAIN_008_001_02_CH_03 = SepaUtilities::SEPA_PAIN_008_001_02_CH_03;
 
     /**
      * @type string INITIAL_STRING_DD Initial sting for direct debit pain.008.001.02
@@ -32,6 +33,11 @@ class SephpaDirectDebit extends Sephpa
      * @type string INITIAL_STRING_DD Initial sting for direct debit pain.008.001.02.austrian.003
      */
     const INITIAL_STRING_PAIN_008_001_02_AUSTRIAN_003 = '<?xml version="1.0" encoding="UTF-8"?><Document xmlns="ISO:pain.008.001.02:APC:STUZZA:payments:003" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"></Document>';
+
+    /**
+     * @type string INITIAL_STRING_DD Initial sting for direct debit pain.008.001.02.ch.03
+     */
+    const INITIAL_STRING_PAIN_008_001_02_CH_03 = '<?xml version="1.0" encoding="UTF-8"?><Document xmlns="http://www.six-interbank-clearing.com/de/pain.008.001.02.ch.03.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.six-interbank-clearing.com/de/pain.008.001.02.ch.03.xsd pain.008.001.02.ch.03.xsd"></Document>';
     /**
      * @type string INITIAL_STRING_DD Initial sting for direct debit pain.008.002.02
      */
@@ -77,6 +83,11 @@ class SephpaDirectDebit extends Sephpa
                 $this->version = self::SEPA_PAIN_008_001_02_AUSTRIAN_003;
                 $this->paymentCollection = new PaymentCollections\SepaDirectDebit00800102Austrian003($debitInfo, $this->checkAndSanitize, $this->sanitizeFlags);
                 break;
+            case self::SEPA_PAIN_008_001_02_CH_03:
+                $this->xmlInitString = self::INITIAL_STRING_PAIN_008_001_02_CH_03;
+                $this->version = self::SEPA_PAIN_008_001_02_CH_03;
+                $this->paymentCollection = new PaymentCollections\SepaDirectDebit00800102Ch03($debitInfo, $this->checkAndSanitize, $this->sanitizeFlags);
+                break;
             case self::SEPA_PAIN_008_002_02:
                 $this->xmlInitString = self::INITIAL_STRING_PAIN_008_002_02;
                 $this->version = self::SEPA_PAIN_008_002_02;
@@ -115,18 +126,18 @@ class SephpaDirectDebit extends Sephpa
         $collectionData = $this->paymentCollection->getCollectionData($options['dateFormat']);
 
         $collectionData = array_merge($collectionData,
-                                      ['file_name'              => $this->getFileName() . '.xml',
-                                       'scheme_version'         => SepaUtilities::version2string($this->version),
-                                       'payment_type'           => 'Direct Debit',
-                                       'message_id'             => $this->msgId,
-                                       'creation_date_time'     => $this->creationDateTime,
-                                       'initialising_party'     => $this->initgPty,
-                                       'number_of_transactions' => $this->paymentCollection->getNumberOfTransactions(),
-                                       'control_sum'            => sprintf($options['moneyFormat']['currency'],
-                                                                           number_format($this->paymentCollection->getCtrlSum(), 2,
-                                                                                         $options['moneyFormat']['dec_point'],
-                                                                                         $options['moneyFormat']['thousands_sep'])),
-                                       'current_date'           => ( new \DateTime() )->format($options['dateFormat'])]
+            ['file_name'              => $this->getFileName() . '.xml',
+                'scheme_version'         => SepaUtilities::version2string($this->version),
+                'payment_type'           => 'Direct Debit',
+                'message_id'             => $this->msgId,
+                'creation_date_time'     => $this->creationDateTime,
+                'initialising_party'     => $this->initgPty,
+                'number_of_transactions' => $this->paymentCollection->getNumberOfTransactions(),
+                'control_sum'            => sprintf($options['moneyFormat']['currency'],
+                    number_format($this->paymentCollection->getCtrlSum(), 2,
+                        $options['moneyFormat']['dec_point'],
+                        $options['moneyFormat']['thousands_sep'])),
+                'current_date'           => ( new \DateTime() )->format($options['dateFormat'])]
         );
 
         $template = empty($options['FRSTemplate'])
@@ -134,7 +145,7 @@ class SephpaDirectDebit extends Sephpa
             : $options['FRSTemplate'];
 
         return ['name' => $this->getFileName() . '.FileRoutingSlip.pdf',
-                'data' => \AbcAeffchen\SepaDocumentor\FileRoutingSlip::createPDF($template, $collectionData)];
+            'data' => \AbcAeffchen\SepaDocumentor\FileRoutingSlip::createPDF($template, $collectionData)];
     }
 
     /**
@@ -150,15 +161,15 @@ class SephpaDirectDebit extends Sephpa
         $collectionData = $this->paymentCollection->getCollectionData($options['dateFormat']);
 
         $collectionData = array_merge($collectionData,
-                                      ['file_name'              => $this->getFileName() . '.xml',
-                                       'message_id'             => $this->msgId,
-                                       'creation_date_time'     => $this->creationDateTime,
-                                       'number_of_transactions' => $this->paymentCollection->getNumberOfTransactions(),
-                                       'control_sum'            => sprintf($options['moneyFormat']['currency'],
-                                                                           number_format($this->paymentCollection->getCtrlSum(), 2,
-                                                                                         $options['moneyFormat']['dec_point'],
-                                                                                         $options['moneyFormat']['thousands_sep']))
-                                      ]
+            ['file_name'              => $this->getFileName() . '.xml',
+                'message_id'             => $this->msgId,
+                'creation_date_time'     => $this->creationDateTime,
+                'number_of_transactions' => $this->paymentCollection->getNumberOfTransactions(),
+                'control_sum'            => sprintf($options['moneyFormat']['currency'],
+                    number_format($this->paymentCollection->getCtrlSum(), 2,
+                        $options['moneyFormat']['dec_point'],
+                        $options['moneyFormat']['thousands_sep']))
+            ]
         );
 
         $template = empty($options['CLTemplate'])
@@ -166,7 +177,7 @@ class SephpaDirectDebit extends Sephpa
             : $options['CLTemplate'];
 
         return ['name' => $this->getFileName() . '.ControlList.pdf',
-                'data' => \AbcAeffchen\SepaDocumentor\ControlList::createPDF($template, $collectionData, $transactions)];
+            'data' => \AbcAeffchen\SepaDocumentor\ControlList::createPDF($template, $collectionData, $transactions)];
     }
 
     /**

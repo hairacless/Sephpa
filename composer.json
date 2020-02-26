@@ -1,5 +1,5 @@
 {
-    "name": "abcaeffchen/sephpa",
+    "name": "hairacless/sephpa",
     "type": "library",
     "description": "Generates Sepa files for credit transfers (pain.001.001.03, pain.001.002.03, pain.001.003.03) and direct debit (pain.008.001.02, pain.008.002.02, pain.008.003.02)",
     "keywords": ["sepa","xml","banking","files","finance","credit transfer","direct debit"],
@@ -10,10 +10,15 @@
             "name": "Alexander Schickedanz (AbcAeffchen)",
             "email": "abcaeffchen@gmail.com",
             "role": "Developer"
+        },
+        {
+            "name": "Daniel Heim",
+            "email": "heim@bytesystems.de",
+            "role": "Developer"
         }
     ],
     "support": {
-        "issues": "https://github.com/AbcAeffchen/Sephpa/issues"
+        "issues": "https://github.com/hairacless/Sephpa/issues"
     },
     "require": {
         "php": ">=5.6.0",
