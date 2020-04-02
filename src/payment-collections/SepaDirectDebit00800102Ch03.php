@@ -140,7 +140,7 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
 
         $pmtTpInf = $pmtInf->addChild('PmtTpInf');
         $pmtTpInf->addChild('SvcLvl')->addChild('Prtry', 'CHTA');
-        $pmtTpInf->addChild('LclInstrm')->addChild('Prtry', $this->debitInfo['LclInstrm']);
+        $pmtTpInf->addChild('LclInstrm')->addChild('Prtry', $this->debitInfo['lclInstrm']);
 
         $pmtInf->addChild('ReqdColltnDt', $reqdColltnDt);
         $pmtInf->addChild('Cdtr')->addChild('Nm', $this->debitInfo['cdtr']);
