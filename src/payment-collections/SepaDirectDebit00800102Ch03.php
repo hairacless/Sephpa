@@ -240,9 +240,12 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
             $drctDbtTxInf->addChild('UltmtDbtr')->addChild('Nm', $payment['ultmtDbtr']);
         if( !empty( $payment['purp'] ) )
             $drctDbtTxInf->addChild('Purp')->addChild('Cd', $payment['purp']);
+
         $rmtInf = $drctDbtTxInf->addChild('RmtInf');
         if( !empty( $payment['rmtInf'] ) )
-            $rmtInf->addChild('RmtInf')->addChild('Ustrd', $payment['rmtInf']);
+        {
+            $rmtInf->addChild('Ustrd', $payment['rmtInf']);
+        }
 
         $cdtrRefInf = $rmtInf->addChild('Strd')->addChild('CdtrRefInf');
         $cdtrRefInf->addChild('Tp')->addChild('CdOrPrtry','ESR');
