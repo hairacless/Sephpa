@@ -181,6 +181,7 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
     private function generatePaymentXml(\SimpleXMLElement $drctDbtTxInf, $payment, $ccy)
     {
         $drctDbtTxInf->addChild('PmtId')->addChild('EndToEndId', $payment['pmtId']);
+        $drctDbtTxInf->addChild('PmtId')->addChild('InstrId', $payment['pmtId']);
         $drctDbtTxInf->addChild('InstdAmt', sprintf('%01.2F', $payment['instdAmt']))
                      ->addAttribute('Ccy', $ccy);
 
@@ -239,8 +240,14 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
             $drctDbtTxInf->addChild('UltmtDbtr')->addChild('Nm', $payment['ultmtDbtr']);
         if( !empty( $payment['purp'] ) )
             $drctDbtTxInf->addChild('Purp')->addChild('Cd', $payment['purp']);
+        $rmtInf = $drctDbtTxInf->addChild('RmtInf');
         if( !empty( $payment['rmtInf'] ) )
-            $drctDbtTxInf->addChild('RmtInf')->addChild('Ustrd', $payment['rmtInf']);
+            $rmtInf->addChild('RmtInf')->addChild('Ustrd', $payment['rmtInf']);
+
+        $cdtrRefInf = $rmtInf->addChild('Strd')->addChild('CdtrRefInf');
+        $cdtrRefInf->addChild('Tp')->addChild('CdOrPrtry','ESR');
+        $cdtrRefInf->addChild('Ref','123456789123456789123456789');
+
     }
 
 }
