@@ -248,7 +248,7 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
         }
 
         $cdtrRefInf = $rmtInf->addChild('Strd')->addChild('CdtrRefInf');
-        $cdtrRefInf->addChild('Tp')->addChild('CdOrPrtry','ESR');
+        $cdtrRefInf->addChild('Tp')->addChild('CdOrPrtry')->addChild('Prtry','ESR');
         $cdtrRefInf->addChild('Ref','123456789123456789123456789');
 
     }
