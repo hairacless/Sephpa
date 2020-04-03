@@ -219,15 +219,18 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
 //                              ->addChild('Id', 'SMNDA');
 //            }
 //        }
-        if( !empty( $payment['elctrncSgntr'] ) )
-            $mndtRltdInf->addChild('ElctrncSgntr', $payment['elctrncSgntr']);
+//        if( !empty( $payment['elctrncSgntr'] ) )
+//            $mndtRltdInf->addChild('ElctrncSgntr', $payment['elctrncSgntr']);
+//
+//        if( !empty( $payment['bic'] ) )
+//            $drctDbtTxInf->addChild('DbtrAgt')->addChild('FinInstnId')
+//                   ->addChild('BIC', $payment['bic']);
+//        else
+//            $drctDbtTxInf->addChild('DbtrAgt')->addChild('FinInstnId')->addChild('Othr')
+//                   ->addChild('Id', 'NOTPROVIDED');
 
-        if( !empty( $payment['bic'] ) )
-            $drctDbtTxInf->addChild('DbtrAgt')->addChild('FinInstnId')
-                   ->addChild('BIC', $payment['bic']);
-        else
-            $drctDbtTxInf->addChild('DbtrAgt')->addChild('FinInstnId')->addChild('Othr')
-                   ->addChild('Id', 'NOTPROVIDED');
+        $drctDbtTxInf->addChild('DbtrAgt')->addChild('FinInstnId')->addChild('ClrSysMmbId')
+            ->addChild('MmbId', '09000');
 
         $drctDbtTxInf->addChild('Dbtr')->addChild('Nm', $payment['dbtr']);
         $drctDbtTxInf->addChild('DbtrAcct')->addChild('Id')
