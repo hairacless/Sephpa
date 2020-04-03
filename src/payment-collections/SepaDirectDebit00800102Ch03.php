@@ -135,8 +135,8 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
         $pmtInf->addChild('PmtMtd', 'DD');
         if( !empty( $this->debitInfo['btchBookg'] ) )
             $pmtInf->addChild('BtchBookg', $this->debitInfo['btchBookg']);
-        $pmtInf->addChild('NbOfTxs', $this->getNumberOfTransactions());
-        $pmtInf->addChild('CtrlSum', sprintf('%01.2F', $this->getCtrlSum()));
+//        $pmtInf->addChild('NbOfTxs', $this->getNumberOfTransactions());
+//        $pmtInf->addChild('CtrlSum', sprintf('%01.2F', $this->getCtrlSum()));
 
         $pmtTpInf = $pmtInf->addChild('PmtTpInf');
         $pmtTpInf->addChild('SvcLvl')->addChild('Prtry', 'CHTA');
@@ -147,7 +147,7 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
 
         $cdtrAcct = $pmtInf->addChild('CdtrAcct');
         $cdtrAcct->addChild('Id')->addChild('IBAN', $this->debitInfo['iban']);
-        $cdtrAcct->addChild('Ccy', $ccy);
+//        $cdtrAcct->addChild('Ccy', $ccy);
 
         $finInstnId = $pmtInf->addChild('CdtrAgt')->addChild('FinInstnId');
         $finInstnId->addChild('ClrSysMmbId')->addChild('MmbId', $this->debitInfo['mmbid']);
@@ -184,41 +184,41 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
         $drctDbtTxInf->addChild('InstdAmt', sprintf('%01.2F', $payment['instdAmt']))
                      ->addAttribute('Ccy', $ccy);
 
-        $mndtRltdInf = $drctDbtTxInf->addChild('DrctDbtTx')->addChild('MndtRltdInf');
-        $mndtRltdInf->addChild('MndtId', $payment['mndtId']);
-        $mndtRltdInf->addChild('DtOfSgntr', $payment['dtOfSgntr']);
-        if(!empty($payment['amdmntInd']))
-        {
-            $mndtRltdInf->addChild('AmdmntInd', $payment['amdmntInd']);
-            if( $payment['amdmntInd'] === 'true' )
-            {
-                $amdmntInd = $mndtRltdInf->addChild('AmdmntInfDtls');
-                if( !empty( $payment['orgnlMndtId'] ) )
-                    $amdmntInd->addChild('OrgnlMndtId', $payment['orgnlMndtId']);
-                if( !empty( $payment['orgnlCdtrSchmeId_Nm'] ) || !empty( $payment['orgnlCdtrSchmeId_Id'] ) )
-                {
-                    $orgnlCdtrSchmeId = $amdmntInd->addChild('OrgnlCdtrSchmeId');
-                    if( !empty( $payment['orgnlCdtrSchmeId_Nm'] ) )
-                        $orgnlCdtrSchmeId->addChild('Nm', $payment['orgnlCdtrSchmeId_Nm']);
-                    if( !empty( $payment['orgnlCdtrSchmeId_Id'] ) )
-                    {
-                        $othr = $orgnlCdtrSchmeId->addChild('Id')->addChild('PrvtId')
-                                                 ->addChild('Othr');
-                        $othr->addChild('Id', $payment['orgnlCdtrSchmeId_Id']);
-                        $othr->addChild('SchmeNm')->addChild('Prtry', 'SEPA');
-                    }
-                }
-                if( !empty( $payment['orgnlDbtrAcct_iban'] ) )
-                    $amdmntInd->addChild('OrgnlDbtrAcct')->addChild('Id')
-                              ->addChild('IBAN', $payment['orgnlDbtrAcct_iban']);
-                elseif( !empty( $payment['orgnlDbtrAgt_bic'] ) )
-                    $amdmntInd->addChild('OrgnlDbtrAgt')->addChild('FinInstnId')
-                              ->addChild('BIC', $payment['orgnlDbtrAgt_bic']);
-                else
-                    $amdmntInd->addChild('OrgnlDbtrAcct')->addChild('Othr')
-                              ->addChild('Id', 'SMNDA');
-            }
-        }
+//        $mndtRltdInf = $drctDbtTxInf->addChild('DrctDbtTx')->addChild('MndtRltdInf');
+//        $mndtRltdInf->addChild('MndtId', $payment['mndtId']);
+//        $mndtRltdInf->addChild('DtOfSgntr', $payment['dtOfSgntr']);
+//        if(!empty($payment['amdmntInd']))
+//        {
+//            $mndtRltdInf->addChild('AmdmntInd', $payment['amdmntInd']);
+//            if( $payment['amdmntInd'] === 'true' )
+//            {
+//                $amdmntInd = $mndtRltdInf->addChild('AmdmntInfDtls');
+//                if( !empty( $payment['orgnlMndtId'] ) )
+//                    $amdmntInd->addChild('OrgnlMndtId', $payment['orgnlMndtId']);
+//                if( !empty( $payment['orgnlCdtrSchmeId_Nm'] ) || !empty( $payment['orgnlCdtrSchmeId_Id'] ) )
+//                {
+//                    $orgnlCdtrSchmeId = $amdmntInd->addChild('OrgnlCdtrSchmeId');
+//                    if( !empty( $payment['orgnlCdtrSchmeId_Nm'] ) )
+//                        $orgnlCdtrSchmeId->addChild('Nm', $payment['orgnlCdtrSchmeId_Nm']);
+//                    if( !empty( $payment['orgnlCdtrSchmeId_Id'] ) )
+//                    {
+//                        $othr = $orgnlCdtrSchmeId->addChild('Id')->addChild('PrvtId')
+//                                                 ->addChild('Othr');
+//                        $othr->addChild('Id', $payment['orgnlCdtrSchmeId_Id']);
+//                        $othr->addChild('SchmeNm')->addChild('Prtry', 'SEPA');
+//                    }
+//                }
+//                if( !empty( $payment['orgnlDbtrAcct_iban'] ) )
+//                    $amdmntInd->addChild('OrgnlDbtrAcct')->addChild('Id')
+//                              ->addChild('IBAN', $payment['orgnlDbtrAcct_iban']);
+//                elseif( !empty( $payment['orgnlDbtrAgt_bic'] ) )
+//                    $amdmntInd->addChild('OrgnlDbtrAgt')->addChild('FinInstnId')
+//                              ->addChild('BIC', $payment['orgnlDbtrAgt_bic']);
+//                else
+//                    $amdmntInd->addChild('OrgnlDbtrAcct')->addChild('Othr')
+//                              ->addChild('Id', 'SMNDA');
+//            }
+//        }
         if( !empty( $payment['elctrncSgntr'] ) )
             $mndtRltdInf->addChild('ElctrncSgntr', $payment['elctrncSgntr']);
 
