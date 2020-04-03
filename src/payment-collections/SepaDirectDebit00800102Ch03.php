@@ -180,8 +180,9 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
      */
     private function generatePaymentXml(\SimpleXMLElement $drctDbtTxInf, $payment, $ccy)
     {
-        $drctDbtTxInf->addChild('PmtId')->addChild('EndToEndId', $payment['pmtId']);
-        $drctDbtTxInf->addChild('PmtId')->addChild('InstrId', $payment['pmtId']);
+        $pmtId = $drctDbtTxInf->addChild('PmtId');
+        $pmtId->addChild('EndToEndId', $payment['pmtId']);
+        $pmtId->addChild('InstrId', $payment['pmtId']);
         $drctDbtTxInf->addChild('InstdAmt', sprintf('%01.2F', $payment['instdAmt']))
                      ->addAttribute('Ccy', $ccy);
 
