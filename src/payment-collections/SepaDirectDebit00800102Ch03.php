@@ -23,6 +23,27 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
      */
     const VERSION = SepaUtilities::SEPA_PAIN_008_001_02_CH_03;
 
+    private static $table = [
+        [0,9,4,6,8,2,7,1,3,5],
+        [9,4,6,8,2,7,1,3,5,0],
+        [4,6,8,2,7,1,3,5,0,9],
+        [6,8,2,7,1,3,5,0,9,4],
+        [8,2,7,1,3,5,0,9,4,6],
+        [2,7,1,3,5,0,9,4,6,8],
+        [7,1,3,5,0,9,4,6,8,2],
+        [1,3,5,0,9,4,6,8,2,7],
+        [3,5,0,9,4,6,8,2,7,1],
+        [5,0,9,4,6,8,2,7,1,3]
+    ];
+
+    public static function calculate($number) {
+        $report = 0;
+        foreach(str_split($number) as $key => $value) {
+            $report = self::$table[$report][(int)$value];
+        }
+        return (10 - $report) % 10;
+    }
+
     /**
      * @param mixed[] $debitInfo        Needed keys: 'pmtInfId', 'lclInstrm', 'seqTp', 'cdtr',
      *                                  'iban', 'bic', 'ci'; optional keys: 'ccy', 'btchBookg',
@@ -180,56 +201,13 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
      */
     private function generatePaymentXml(\SimpleXMLElement $drctDbtTxInf, $payment, $ccy)
     {
+
+
         $pmtId = $drctDbtTxInf->addChild('PmtId');
         $pmtId->addChild('InstrId', $payment['pmtId']);
         $pmtId->addChild('EndToEndId', $payment['pmtId']);
         $drctDbtTxInf->addChild('InstdAmt', sprintf('%01.2F', $payment['instdAmt']))
                      ->addAttribute('Ccy', $ccy);
-
-//        $mndtRltdInf = $drctDbtTxInf->addChild('DrctDbtTx')->addChild('MndtRltdInf');
-//        $mndtRltdInf->addChild('MndtId', $payment['mndtId']);
-//        $mndtRltdInf->addChild('DtOfSgntr', $payment['dtOfSgntr']);
-//        if(!empty($payment['amdmntInd']))
-//        {
-//            $mndtRltdInf->addChild('AmdmntInd', $payment['amdmntInd']);
-//            if( $payment['amdmntInd'] === 'true' )
-//            {
-//                $amdmntInd = $mndtRltdInf->addChild('AmdmntInfDtls');
-//                if( !empty( $payment['orgnlMndtId'] ) )
-//                    $amdmntInd->addChild('OrgnlMndtId', $payment['orgnlMndtId']);
-//                if( !empty( $payment['orgnlCdtrSchmeId_Nm'] ) || !empty( $payment['orgnlCdtrSchmeId_Id'] ) )
-//                {
-//                    $orgnlCdtrSchmeId = $amdmntInd->addChild('OrgnlCdtrSchmeId');
-//                    if( !empty( $payment['orgnlCdtrSchmeId_Nm'] ) )
-//                        $orgnlCdtrSchmeId->addChild('Nm', $payment['orgnlCdtrSchmeId_Nm']);
-//                    if( !empty( $payment['orgnlCdtrSchmeId_Id'] ) )
-//                    {
-//                        $othr = $orgnlCdtrSchmeId->addChild('Id')->addChild('PrvtId')
-//                                                 ->addChild('Othr');
-//                        $othr->addChild('Id', $payment['orgnlCdtrSchmeId_Id']);
-//                        $othr->addChild('SchmeNm')->addChild('Prtry', 'SEPA');
-//                    }
-//                }
-//                if( !empty( $payment['orgnlDbtrAcct_iban'] ) )
-//                    $amdmntInd->addChild('OrgnlDbtrAcct')->addChild('Id')
-//                              ->addChild('IBAN', $payment['orgnlDbtrAcct_iban']);
-//                elseif( !empty( $payment['orgnlDbtrAgt_bic'] ) )
-//                    $amdmntInd->addChild('OrgnlDbtrAgt')->addChild('FinInstnId')
-//                              ->addChild('BIC', $payment['orgnlDbtrAgt_bic']);
-//                else
-//                    $amdmntInd->addChild('OrgnlDbtrAcct')->addChild('Othr')
-//                              ->addChild('Id', 'SMNDA');
-//            }
-//        }
-//        if( !empty( $payment['elctrncSgntr'] ) )
-//            $mndtRltdInf->addChild('ElctrncSgntr', $payment['elctrncSgntr']);
-//
-//        if( !empty( $payment['bic'] ) )
-//            $drctDbtTxInf->addChild('DbtrAgt')->addChild('FinInstnId')
-//                   ->addChild('BIC', $payment['bic']);
-//        else
-//            $drctDbtTxInf->addChild('DbtrAgt')->addChild('FinInstnId')->addChild('Othr')
-//                   ->addChild('Id', 'NOTPROVIDED');
 
         $drctDbtTxInf->addChild('DbtrAgt')->addChild('FinInstnId')->addChild('ClrSysMmbId')
             ->addChild('MmbId', '09000');
@@ -250,6 +228,10 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
 
         $cdtrRefInf = $rmtInf->addChild('Strd')->addChild('CdtrRefInf');
         $cdtrRefInf->addChild('Tp')->addChild('CdOrPrtry')->addChild('Prtry','ESR');
-        $cdtrRefInf->addChild('Ref',str_pad($payment['ref'],27,"0", STR_PAD_LEFT));
+
+        $esr_ref = str_pad($payment['ref'],26,"0", STR_PAD_LEFT);
+        $esr_ref = $esr_ref . self::calculate($esr_ref);
+
+        $cdtrRefInf->addChild($esr_ref);
     }
 }
