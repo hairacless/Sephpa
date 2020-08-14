@@ -232,6 +232,6 @@ class SepaDirectDebit00800102Ch03 extends SepaDirectDebitCollection
         $esr_ref = str_pad($payment['ref'],26,"0", STR_PAD_LEFT);
         $esr_ref = $esr_ref . self::calculate($esr_ref);
 
-        $cdtrRefInf->addChild($esr_ref);
+        $cdtrRefInf->addChild('Ref', $esr_ref);
     }
 }
